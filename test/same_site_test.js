@@ -41,7 +41,7 @@ vows
   .addBatch({
     "Testing retrieval from a three-cookie jar": {
       topic: function() {
-        const jar = new CookieJar();
+        const jar = new CookieJar(); // 啥事也没干，就把 jar 对象的属性初始化了
         const url = (this.url = "http://example.com/index.html");
         const options = {};
 
@@ -50,10 +50,13 @@ vows
           "lax=okay; SameSite=lax",
           "normal=whatever" // none
         ].forEach(str => {
+          // 将 set-cookie 内容转成 cookie 对象，并给它设置属性，包括默认的 domain, path 等等
+          // 赋予创建时间、更新时间，然后将这个 cookie 对象存在一个 store 的 idx[domain][path][key] 对象中
           jar.setCookieSync(Cookie.parse(str), url, options);
         });
         return jar;
       },
+      // 当请求的 domain
       "when making a same-site request": {
         topic: function(jar) {
           jar.getCookies(
